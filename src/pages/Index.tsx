@@ -1,18 +1,23 @@
-
 import { MediaProvider } from "@/contexts/MediaContext";
 import MediaTable from "@/components/MediaTable/MediaTable";
 import MediaTableToolbar from "@/components/MediaTable/MediaTableToolbar";
+import Layout from "@/components/Layout/Layout";
+import { useState } from "react";
 
 const Index = () => {
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  
+  const toggleSidebar = () => setSidebarExpanded(prev => !prev);
+  
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container py-8">
-        <MediaProvider>
-          <MediaTableToolbar />
+    <MediaProvider>
+      <Layout sidebarExpanded={sidebarExpanded} setSidebarExpanded={setSidebarExpanded}>
+        <div className="px-4 md:px-6">
+          <MediaTableToolbar onSidebarToggle={toggleSidebar} />
           <MediaTable />
-        </MediaProvider>
-      </div>
-    </div>
+        </div>
+      </Layout>
+    </MediaProvider>
   );
 };
 

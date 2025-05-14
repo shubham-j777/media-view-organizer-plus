@@ -1,5 +1,4 @@
-
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useMedia } from "@/contexts/MediaContext";
 import { Media } from "@/types/media";
 import MediaRow from "./MediaRow";
@@ -8,25 +7,19 @@ import { cn } from "@/lib/utils";
 
 const MediaTable = () => {
   const { 
-    mediaList, 
-    searchTerm, 
+    filteredMediaList,
     visibleColumns,
     sortConfig,
-    setSortConfig
+    setSortConfig,
+    searchTerm,
+    selectedCategory
   } = useMedia();
-
-  // Filter media list based on search term
-  const filteredMedia = useMemo(() => {
-    return mediaList.filter(media => 
-      media.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [mediaList, searchTerm]);
 
   // Sort media list
   const sortedMedia = useMemo(() => {
-    if (!sortConfig.key) return filteredMedia;
+    if (!sortConfig.key) return filteredMediaList;
     
-    return [...filteredMedia].sort((a, b) => {
+    return [...filteredMediaList].sort((a, b) => {
       if (a[sortConfig.key] === null) return 1;
       if (b[sortConfig.key] === null) return -1;
       
@@ -41,7 +34,7 @@ const MediaTable = () => {
       }
       return 0;
     });
-  }, [filteredMedia, sortConfig]);
+  }, [filteredMediaList, sortConfig]);
 
   const handleSort = (key: keyof Media) => {
     setSortConfig(currentConfig => {
@@ -135,7 +128,9 @@ const MediaTable = () => {
               >
                 {searchTerm 
                   ? "No media found matching your search." 
-                  : "No media added yet. Add some media to get started!"
+                  : selectedCategory !== "all" 
+                    ? `No ${selectedCategory} found in your list.`
+                    : "No media added yet. Add some media to get started!"
                 }
               </td>
             </tr>
