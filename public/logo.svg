@@ -1,0 +1,20 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#7B00FF"/>
+  
+  <!-- App Icon -->
+  <rect x="40" y="40" width="120" height="120" rx="35" fill="#3A0075"/>
+  <circle cx="100" cy="100" r="45" fill="#B85AFF"/>
+  
+  <!-- Play button -->
+  <path d="M85 70L125 100L85 130V70Z" fill="white" stroke="#3A0075" stroke-width="4"/>
+  
+  <!-- Circular highlight -->
+  <circle cx="95" cy="80" r="8" fill="white" opacity="0.7"/>
+  <circle cx="100" cy="100" r="45" stroke="white" stroke-width="3" stroke-dasharray="6 3"/>
+  
+  <!-- TW Text with glitch effect -->
+  <text x="155" y="130" font-family="Arial, sans-serif" font-size="90" font-weight="bold" fill="white" stroke="#FF00FF" stroke-width="1" opacity="0.9">TW</text>
+  <text x="153" y="130" font-family="Arial, sans-serif" font-size="90" font-weight="bold" fill="white" stroke="#00FFFF" stroke-width="1" opacity="0.9">TW</text>
+  <text x="154" y="130" font-family="Arial, sans-serif" font-size="90" font-weight="bold" fill="white">TW</text>
+</svg> 
