@@ -1,9 +1,10 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Media, MediaType } from "../types/media";
 import { mockMediaData } from "../data/mockData";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/components/ui/use-toast";
+
+export type MediaCategory = "all" | "anime" | "movie" | "webseries";
 
 interface MediaContextProps {
   mediaList: Media[];
@@ -21,7 +22,7 @@ interface MediaContextProps {
     rating: boolean;
     notes: boolean;
   };
-  toggleColumnVisibility: (column: keyof typeof visibleColumns) => void;
+  toggleColumnVisibility: (column: keyof typeof defaultVisibleColumns) => void;
   sortConfig: {
     key: keyof Media | null;
     direction: "asc" | "desc";
@@ -32,7 +33,18 @@ interface MediaContextProps {
       direction: "asc" | "desc";
     }>
   >;
+  selectedCategory: MediaCategory;
+  setSelectedCategory: React.Dispatch<React.SetStateAction<MediaCategory>>;
+  filteredMediaList: Media[];
 }
+
+const defaultVisibleColumns = {
+  image: true,
+  title: true,
+  type: true,
+  rating: true,
+  notes: true,
+};
 
 const MediaContext = createContext<MediaContextProps | undefined>(undefined);
 
@@ -42,13 +54,8 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
   const [mediaList, setMediaList] = useState<Media[]>([]);
   const [expandedMediaId, setExpandedMediaId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [visibleColumns, setVisibleColumns] = useState({
-    image: true,
-    title: true,
-    type: true,
-    rating: true,
-    notes: true,
-  });
+  const [selectedCategory, setSelectedCategory] = useState<MediaCategory>("all");
+  const [visibleColumns, setVisibleColumns] = useState(defaultVisibleColumns);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Media | null;
     direction: "asc" | "desc";
@@ -129,12 +136,31 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const toggleColumnVisibility = (column: keyof typeof visibleColumns) => {
+  const toggleColumnVisibility = (column: keyof typeof defaultVisibleColumns) => {
     setVisibleColumns((prev) => ({
       ...prev,
       [column]: !prev[column],
     }));
   };
+  
+  // Filter media list based on selected category and search term
+  const filteredMediaList = mediaList.filter((media) => {
+    const matchesSearch = media.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (media.notes && media.notes.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    if (selectedCategory === "all") {
+      return matchesSearch;
+    }
+    
+    const categoryMapping: Record<Exclude<MediaCategory, "all">, MediaType[]> = {
+      "anime": ["anime"],
+      "movie": ["movie"],
+      "webseries": ["series"]
+    };
+    
+    const categoryTypes = categoryMapping[selectedCategory as Exclude<MediaCategory, "all">] || [];
+    return matchesSearch && categoryTypes.includes(media.type);
+  });
 
   return (
     <MediaContext.Provider
@@ -151,6 +177,9 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
         toggleColumnVisibility,
         sortConfig,
         setSortConfig,
+        selectedCategory,
+        setSelectedCategory,
+        filteredMediaList,
       }}
     >
       {children}
